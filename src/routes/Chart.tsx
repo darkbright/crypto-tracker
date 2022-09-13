@@ -5,10 +5,10 @@ import ApexChart from "react-apexcharts";
 interface IHistorical {
   time_open: number;
   time_close: number;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
+  open: string;
+  high: string;
+  low: string;
+  close: string;
   volume: number;
   market_cap: number;
 }
@@ -23,26 +23,24 @@ function Chart({ coinId }: ChartProps) {
       refetchInterval: 10000,
     }
   );
-  const priceData = data?.map((price) => price.close) as number[];
-  const dateData = data?.map((price) => price.time_close * 1000);
+  const exceptData = data ?? [];
+  const chartData = exceptData?.map((d) => {
+    return {
+      x: d.time_close * 1000,
+      y: [d.open, d.high, d.low, d.close],
+    }
+  });
 
+  console.log(chartData);
   return (
     <div>
       {isLoading ? (
         "Loading chart..."
       ) : (
         <ApexChart
-          type="line"
-          series={[
-            {
-              name: "Price",
-              data: priceData,
-            },
-          ]}
+          type="candlestick"
           options={{
-            theme: {
-              mode: "dark",
-            },
+            theme: { mode: 'dark' },
             chart: {
               height: 300,
               width: 500,
@@ -52,10 +50,6 @@ function Chart({ coinId }: ChartProps) {
               background: "transparent",
             },
             grid: { show: false },
-            stroke: {
-              curve: "smooth",
-              width: 4,
-            },
             yaxis: {
               show: false,
             },
@@ -64,19 +58,18 @@ function Chart({ coinId }: ChartProps) {
               axisTicks: { show: false },
               labels: { show: false },
               type: "datetime",
-              categories: dateData,
             },
-            fill: {
-              type: "gradient",
-              gradient: { gradientToColors: ["#0be881"], stops: [0, 100] },
-            },
-            colors: ["#0fbcf9"],
             tooltip: {
               y: {
                 formatter: (value) => `$${value.toFixed(2)}`,
               },
             },
           }}
+          series={[
+            {
+              data: chartData,
+            },
+          ]}
         />
       )}
     </div>
