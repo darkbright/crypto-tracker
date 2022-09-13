@@ -3,8 +3,8 @@ import { fetchCoinHistory } from "../api";
 import ApexChart from "react-apexcharts";
 
 interface IHistorical {
-  time_open: string;
-  time_close: string;
+  time_open: number;
+  time_close: number;
   open: number;
   high: number;
   low: number;
@@ -19,6 +19,9 @@ function Chart({ coinId }: ChartProps) {
   const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
     fetchCoinHistory(coinId)
   );
+  const priceData = data?.map((price) => price.close) as number[];
+  const dateData = data?.map((price) => price.time_close * 1000);
+
   return (
     <div>
       {isLoading ? (
@@ -29,7 +32,7 @@ function Chart({ coinId }: ChartProps) {
           series={[
             {
               name: "Price",
-              data: data?.map((price) => price.close) as number[],
+              data: priceData,
             },
           ]}
           options={{
@@ -57,7 +60,7 @@ function Chart({ coinId }: ChartProps) {
               axisTicks: { show: false },
               labels: { show: false },
               type: "datetime",
-              categories: data?.map((price) => price.time_close),
+              categories: dateData,
             },
             fill: {
               type: "gradient",
