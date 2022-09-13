@@ -174,6 +174,7 @@ function Coin() {
         <Loader>Loading...</Loader>
       ) : (
         <>
+          <Link to={"/"}>Home &rarr;</Link>
           <Overview>
             <OverviewItem>
               <span>Rank:</span>
