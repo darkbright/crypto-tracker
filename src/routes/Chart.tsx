@@ -34,7 +34,6 @@ function Chart({ coinId }: ChartProps) {
     }
   });
 
-  console.log(chartData);
   return (
     <div>
       {isLoading ? (
